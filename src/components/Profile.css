@@ -1,0 +1,20 @@
+.explicit-tag{
+  border-color:#666666;
+  border-style: solid;
+  border-radius: 30px;
+  width:6rem;
+  margin-left: 1rem;
+  height: 30px;
+}
+
+.explicit-text{
+  line-height: 30px;
+  text-align: center;
+  font-weight: bold;
+}
+.profile-card{
+  width:50%;
+}
+.back-arrow{
+  font-size: 2rem !important;
+}

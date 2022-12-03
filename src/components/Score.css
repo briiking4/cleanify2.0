@@ -1,0 +1,22 @@
+.green-pie{
+  border-radius: 50%;
+  background-color: green;
+}
+.red-pie{
+  border-radius: 50%;
+  background-color: red;
+}
+
+.yellow-pie{
+  border-radius: 50%;
+  background-color: yellow;
+}
+
+.donut{
+  width: 200;
+  height: 200;
+}
+
+.CircularProgressbar{
+  width: 50% !important;
+}

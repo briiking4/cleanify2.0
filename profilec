@@ -1,0 +1,71 @@
+return (
+
+   <div id="profile" className="pt-3">
+     { tracksList ?
+       <div className="justify-content-left text-left">
+       <div className="row">
+           <img src={trackInfo.photo} id= {trackInfo.id} className="search-card" alt="card"/>
+               <p className="font-weight-bold text-overflow">{trackInfo.name}</p>
+               <p>{trackInfo.artist}</p>
+             </div>
+
+             <div className="col-2">
+               <div className="row">
+                 {trackInfo.explicit ?
+                   <Explicit className="ml-2 text-danger"/>
+                   :
+                   <></>
+                 }
+               </div>
+
+               <div className="row">
+                 <button className="btn m-n1" onClick={() => showLyrics()}>
+                   <QueueMusicIcon className="text-white"/>
+                 </button>
+
+                 {lyricsOn ?
+                   <Lyrics title={name} artist={artist}/>
+                   :
+                   <></>
+                 }
+               </div>
+
+             </div>
+           </div>
+
+         </div>
+
+       </div>
+
+
+           <button className="btn btn-success" onClick={() => showScore()}>
+             <OpacityIcon/>
+             Score
+           </button>
+
+           {scoreOn ?
+               <Score title={name} artist={artist}/>
+               :
+             <></>
+           }
+         <div>
+
+         </div>
+
+
+         <div className="p-3 col-10">
+           <h4>Clean Version:</h4>
+           {renderClean()}
+
+         </div>
+
+         <div className="p-3 col-10">
+           <h4>All Versions:</h4>
+           <ListItems list={tracksList}/>
+         </div>
+       </div>
+       :
+       <h1>No list</h1>
+     }
+   </div>
+ );

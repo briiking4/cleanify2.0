@@ -1,0 +1,48 @@
+
+.App {
+  text-align: center;
+  color:white;
+}
+
+.text-yellow{
+  color: #fad974
+}
+
+::-webkit-scrollbar {
+    width: 0;  /* Remove scrollbar space */
+    background: transparent;  /* Optional: just make scrollbar invisible */
+}
+
+p{
+  margin-bottom: 0.5rem;
+}
+
+.btn{
+  margin: 2rem;
+}
+
+.profile{
+  padding-bottom: 1.5rem;
+  margin-top:15px;;
+  width:100%;
+
+}
+.logo{
+  width:500px;
+  min-width:45%;
+}
+.logo-title{
+  margin:1rem;
+  font-size: 4.5vh;
+}
+
+.login{
+  margin-top:50%
+}
+
+.logout{
+  margin-top:1rem;
+  position:fixed;
+  top:0;
+  right:10px;
+}
