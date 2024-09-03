@@ -136,7 +136,7 @@ componentDidMount(){
                 <h1 className="logo-title font-weight-bold">Cleanify</h1>
             </div>
               <div>
-              <a id="login-button" href="http://localhost:3333/login" className="btn btn-success">Log in with Spotify</a>
+              <a id="login-button" href="https://briiking4.github.io/cleanify2.0/login" className="btn btn-success">Log in with Spotify</a>
               </div>
           </div>
         }
