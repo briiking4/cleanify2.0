@@ -23,13 +23,13 @@ p{
 
 .profile{
   padding-bottom: 1.5rem;
-  margin-top:15px;;
-  width:100%;
+  margin:5px;
+  width:45%;
 
 }
 .logo{
-  width:500px;
-  min-width:45%;
+  width:35%;
+
 }
 .logo-title{
   margin:1rem;
@@ -37,7 +37,7 @@ p{
 }
 
 .login{
-  margin-top:50%
+  margin-top:10%
 }
 
 .logout{
@@ -45,4 +45,8 @@ p{
   position:fixed;
   top:0;
   right:10px;
+}
+
+.back-arrow{
+  font-size: 2rem !important;
 }

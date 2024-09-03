@@ -25,78 +25,70 @@ function Search(props) {
 
   const isMounted = useRef(true);
 
-  useEffect(() => {
-    console.log("mounted")
+  async function getRecentItems(){
+    let searchResult = await spotifyApi.getMyRecentlyPlayedTracks()
+    console.log(searchResult)
+    let list= []
+    for (let i of searchResult.items){
+      list.push(i.track)
+    }
+    console.log("RECENT")
+    setRecent(list)
+  }
 
-    async function getRecentItems(){
-      let searchResult = await spotifyApi.getMyRecentlyPlayedTracks()
-      console.log(searchResult)
-      let list= []
-      for (let i of searchResult.items){
+  async function getUserPlaylists(){
+    let total = 1
+    let itemCount = 0
+    let list = []
+    while(itemCount < total){
+      let response = await spotifyApi.getUserPlaylists({limit:50,offset:itemCount})
+      const items = await response
+      itemCount += items.items.length
+      total = items.total
+      list = list.concat(items.items)
+    }
+    console.log(list)
+    setPlaylists(list)
+  }
+
+  async function getUserTracks(){
+    let total = 1
+    let itemCount = 0
+    let list = []
+    while(itemCount < total){
+      let response = await spotifyApi.getMySavedTracks({limit:50,offset:itemCount})
+      const items = await response
+      itemCount += items.items.length
+      total = items.total
+      for (let i of items.items){
         list.push(i.track)
       }
-      console.log("RECENT")
-      setRecent(list)
+    }
+    console.log("USER TRACKS")
+    console.log(list)
+    setUserTracks(list)
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    console.log("mounted")
+    async function getSearchTracks(){
+          await getRecentItems()
+          await getUserPlaylists()
+          await getUserTracks()
     }
     if(location == 'library'){
-      getRecentItems()
+      getSearchTracks()
     }
+
     return () => {
       setRecent({}); // This worked for me
-    };
-
-     },[]);
-
-  useEffect(() =>{
-    async function getUserPlaylists(){
-      let total = 1
-      let itemCount = 0
-      let list = []
-      while(itemCount < total){
-        let response = await spotifyApi.getUserPlaylists({limit:50,offset:itemCount})
-        const items = await response
-        itemCount += items.items.length
-        total = items.total
-        list = list.concat(items.items)
-      }
-      console.log(list)
-      setPlaylists(list)
-    }
-    if(location == 'library'){
-      getUserPlaylists()
-    }
-    return () => {
       setPlaylists({}); // This worked for me
-    };
-
-  },[]);
-
-  useEffect(() =>{
-    async function getUserTracks(){
-      let total = 1
-      let itemCount = 0
-      let list = []
-      while(itemCount < total){
-        let response = await spotifyApi.getMySavedTracks({limit:50,offset:itemCount})
-        const items = await response
-        itemCount += items.items.length
-        total = items.total
-        for (let i of items.items){
-          list.push(i.track)
-        }
-      }
-      console.log("TRACKS")
-      setUserTracks(list)
-      setLoading(false)
-    }
-    if(location == 'library'){
-      getUserTracks()
-    }
-    return () => {
       setUserTracks({});
+
     };
 
-  },[]);
+    },[]);
 
 
   // const getRecentItems = async () =>{
@@ -179,28 +171,29 @@ function Search(props) {
 
   function renderItems() {
     console.log(searchList)
-
-    let items = <p className="pt-3">Search items</p>
-      items = <ListItems list={searchList} type={filterStatus} itemSelected={setSelected} selectedItem={setSelectedValue}/>
+    let items = 
+    <div style={{height:"64vh"}} class="overflow-auto">
+      <ListItems list={searchList} type={filterStatus} itemSelected={setSelected} selectedItem={setSelectedValue}/>
+    </div>
     return items;
   }
 
   function renderRecentPlayedTracks() {
     console.log(recentList)
     let items =
-      <>
+      <div style={{height:"64vh"}} class="overflow-auto">
         <p className="pt-3 text-left text-muted">Recently Played</p>
         <ListItems list={recentList} type={filterStatus} itemSelected={setSelected} selectedItem={setSelectedValue}/>
-      </>
+      </div>
     return items;
   }
   function renderUserPlaylists() {
 
     let items =
-      <>
+      <div style={{height:"64vh"}} class="overflow-auto">
         <p className="pt-3 text-left text-muted">Playlists</p>
         <ListItems list={playlistList} type={filterStatus} itemSelected={setSelected} selectedItem={setSelectedValue}/>
-      </>
+      </div>
     return items;
   }
 

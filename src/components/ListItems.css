@@ -15,4 +15,5 @@ text-align: left;
 
 .horiz{
   overflow-x: auto;
+  white-space: nowrap;
 }

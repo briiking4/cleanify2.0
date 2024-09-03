@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import ListItems from './ListItems'
 import CleanPlaylist from './CleanPlaylist'
 import Lyrics from './Lyrics'
@@ -6,67 +7,82 @@ import Score from './Score'
 import Library from './Library'
 import MainSearch from './MainSearch'
 import Home from './Home'
+import BackButton from './BackButton';
 
 
 import SpotifyWebApi from 'spotify-web-api-js';
-import './Profile.css'
-import QueueMusicIcon from '@material-ui/icons/QueueMusic';
-import OpacityIcon from '@material-ui/icons/Opacity';
-import Explicit from '@material-ui/icons/Explicit';
-import FavoriteIcon from '@material-ui/icons/Favorite';
+import './Profile.css';
+import QueueMusicIcon from '@mui/icons-material/QueueMusic';
+import OpacityIcon from '@mui/icons-material/Opacity';
+import ExplicitIcon from '@mui/icons-material/Explicit';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import LyricsIcon from '@mui/icons-material/Lyrics';
 import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
-
 
 const spotifyApi = new SpotifyWebApi();
 
 
-function TrackProfile(props) {
+function Profile(props) {
+  const { type, id } = useParams();
 
-const id  = props.id
-const name = props.name
-const artist = props.artist
-const type= props.type
+
+// const id  = props.id
+// const name = props.name
+// const artist = props.artist
+// const type= props.type
 const location = props.location
-console.log(location)
+// console.log(id)
+// console.log(name)
 
 
 const [tracksList, setList] = useState(null)
 
-const [trackInfo, setInfo] = useState({id:'' , name:'', photo: ''})
+const [trackInfo, setInfo] = useState({id: id , name:'', photo: '', explicit: null})
 
-const [lyricsOn, setLyricsOn] = useState(false)
+const [lyricsStatus, setShowLyrics] = useState(false)
 
 const [scoreOn, setScoreOn] = useState(false)
 
 const [buttonClicked, setButton] = useState(false)
 
+const [trackItemSelected, setSelected] = useState(false);
+const [trackValue, setSelectedValue] = useState('')
 
+useEffect(() => {
+  async function fetchData() {
+    await getTrackInfo(id);
+  }
+  fetchData();
+}, [id]);
 
-  useEffect(()=>{
-
-    console.log(type)
-
-    async function getTracks(name, artist){
-      let searchResult = await spotifyApi.search('track: ' +name+ ' artist: '+ '"'+ artist + '"' ,['track'])
-      console.log(searchResult)
-
-      setList(searchResult.tracks.items)
+useEffect(() => {
+  if (trackInfo.name && trackInfo.artist) {
+    async function fetchCleanTracks() {
+      await getCleanTracks(trackInfo.name, trackInfo.artist);
     }
+    fetchCleanTracks();
+  }
+}, [trackInfo]);
 
-    async function getTrackInfo(id){
-      let searchResult = await spotifyApi.getTrack(id)
-      setInfo({id: id, name: searchResult.name, artist:searchResult.artists[0].name, explicit:searchResult.explicit, photo: searchResult.album.images[0].url})
-      console.log(searchResult)
-    }
 
-    if (type == 'track'){
-      console.log("IM IN")
-      getTracks(name, artist)
-      getTrackInfo(id)
-    }
+  async function getCleanTracks(name, artist){
+    let searchResult = await spotifyApi.search('track: ' +name+ ' artist: '+ '"'+ artist + '"' ,['track'])
+    let cleanTracks = []
+    console.log(searchResult)
+    searchResult.tracks.items.map((item) =>{
+      if(item.artists[0].name === artist && item.explicit === false && type === "track" && item.name.includes(name)){
+        cleanTracks.push(item)
+      }
+    })
+    console.log("cleanTracks")
+    setList(cleanTracks)
+  }
 
-  },[]);
+  async function getTrackInfo(id){
+    let searchResult = await spotifyApi.getTrack(id)
+    setInfo({id: id, name: searchResult.name, artist:searchResult.artists[0].name, explicit:searchResult.explicit, photo: searchResult.album.images[0].url})
+  }
+
 
 function renderTag(){
   let state = '';
@@ -88,38 +104,17 @@ function renderTag(){
 }
 
 function showLyrics(){
-  setLyricsOn(!lyricsOn)
-}
-
- function findCleanTrack(list){
-  var cleanTrack;
-  var itemC;
-  var counter = 0;
-    for (itemC of list){
-      if (itemC.explicit === false){
-        if((itemC.name === name || itemC.name.includes("Clean")) && (itemC.artists[0].name === artist && counter <= 0) ){
-          cleanTrack = itemC
-          counter ++
-        }
-      }
-    }
-    if (counter === 0 ){
-      cleanTrack = null
-    }
-
-    return cleanTrack
+  console.log("lyrics button pressed. Status = " + lyricsStatus)
+  setShowLyrics(!lyricsStatus);
 }
 
 function renderClean(){
-  let list = []
-  let cleanTrack = findCleanTrack(tracksList)
-  list.push(cleanTrack)
-  console.log(list)
+  console.log(tracksList);
 
-  const showTrack = cleanTrack ?
-                      <ListItems list={list} type='track'/>
+  const showTrack = tracksList.length > 0 ?
+                      <ListItems list={tracksList} type='track' addOn/>
                     :
-                    <h6>There are no clean versions</h6>
+                    <h6>There are no clean versions available for this track</h6>
 
   return showTrack
 }
@@ -137,36 +132,19 @@ function handleBackButton(){
 
    return (
 
-
-     <div id="profile" className="">
-     { buttonClicked ?
-        location == 'search' ?
-         <MainSearch/>
-         :
-         location == 'library' ?
-         <Library/>
-         :
-         <Home/>
-       :
-       <>
-       <div className="text-left">
-         <button className="btn mt-n2 mb-n2 ml-n1" onClick={() => handleBackButton()}><ArrowCircleLeftIcon className="text-yellow float-left back-arrow"/></button>
-       </div>
-
-
-        { tracksList && type == 'track' ?
+     <div id="profile">
+      <BackButton/>
+        { tracksList && type == 'track' &&
           <div>
-            <div className="row justify-content-center">
-
-              <img src={trackInfo.photo} id= {trackInfo.id} className="profile-card" alt="card"/>
-
+            <div style={{ position: 'relative'}}>
+            <Score title={trackInfo.name} artist={trackInfo.artist} image={trackInfo.photo} explicit={trackInfo.explicit}/>
             </div>
 
-            <div className="row justify-content-center">
-             <p className="mt-1 font-weight-bold">{trackInfo.name}
+            <div className="row justify-content-center mt-4">
+             <p className="font-weight-bold">{trackInfo.name}
 
                {trackInfo.explicit ?
-               <Explicit className="ml-2 text-danger float-right"/>
+               <ExplicitIcon className="ml-2 text-danger float-right"/>
                :
                <></>
                }
@@ -176,47 +154,46 @@ function handleBackButton(){
             <div className="row justify-content-center">
              <p className="font-weight-bold">{trackInfo.artist}</p>
             </div>
-
+{/* 
             <div className="row justify-content-center">
               <div className="col">
                <FavoriteIcon/>
               </div>
 
               <div className="col">
-               <LyricsIcon/>
+               <LyricsIcon onClick={() => showLyrics()}/>
 
               </div>
-            </div>
+            </div> */}
+
+            { lyricsStatus == true ?
+              <div>
+                <Lyrics title={trackInfo.name} artist={trackInfo.artist}/>
+
+              </div>
+              :
+              <div>  </div>
+            }
+             { trackInfo.explicit && 
 
             <div>
-             <Score title={trackInfo.name} artist={trackInfo.artist}/>
-
-            </div>
-
-            <div>
-
                <h5 className="mt-4">Clean Version(s)</h5>
-
-               {renderClean()}
+               <div style={{height:"25vh"}} class="overflow-auto">
+                {renderClean()}
+               </div>
 
             </div>
-
+             }
 
           </div>
-          :
-          <></>
         }
-        {type == 'playlist' ?
-         <CleanPlaylist name={name} data={id}/>
-         :
-         <></>
+        {type == 'playlist' &&
+         <CleanPlaylist data={id}/>
         }
-        </>
-     }
      </div>
 
 
     );
 }
 
-export default TrackProfile
+export default Profile

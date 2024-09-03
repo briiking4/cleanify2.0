@@ -8,13 +8,14 @@ class CleanPlaylist extends React.Component{
     super(props);
     this.state = {
       userId:'',
-      playlistName: this.props.name,
+      playlistName: '',
       playlistId: this.props.data,
       ownerId: '',
       buttonPressed: false,
       loadingData: false,
       newPlaylistId: '',
       revealUnable: false,
+      emptyPlaylist: false
     };
 
     this.explicitTracks = [];
@@ -36,18 +37,33 @@ class CleanPlaylist extends React.Component{
   getTracksData(owner, id){
     var explicitTracksList = []
     var cleanTracksList = []
-    spotifyApi.getPlaylistTracks(owner, id)
+    spotifyApi.getPlaylist(owner, id)
       .then((response) => {
-        response.items.map((item) =>{
-          if(item.track.explicit === true){
-            explicitTracksList.push(item.track)
-          }else{
-            cleanTracksList.push(item.track)
-          }
-        })
+        console.log(response)
+        this.setState({
+          playlistName: response.name
+         })
+        if (response.tracks.items.length > 0){
+          response.tracks.items.map((item) =>{
+            console.log(item)
+            if(item.track){
+              if(item.track.explicit === true){
+                explicitTracksList.push(item.track)
+              }else{
+                cleanTracksList.push(item.track)
+              }
+            }
+          })
+        }else{
+          this.setState({
+            emptyPlaylist: true
+           })
+        }
       })
       this.explicitTracks = explicitTracksList
       this.cleanTracks = cleanTracksList
+
+      console.log(this.emptyPlaylist)
 
 
     }
@@ -277,7 +293,7 @@ class CleanPlaylist extends React.Component{
         </div>
         :
           <div>
-            <button type="button" className="btn btn-lg btn-success mt-5" onClick= {this.makeCleanPlaylist} disabled={this.state.loadingData}>
+            <button type="button" className="btn btn-lg btn-success mt-5" onClick= {this.makeCleanPlaylist} disabled={this.state.loadingData || this.state.emptyPlaylist}>
             { this.state.loadingData &&
               <i className="fa fa-compact-disc fa-spin text-white"></i>
             }

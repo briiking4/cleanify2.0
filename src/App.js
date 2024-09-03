@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import profPic from './profPic.png';
 import logo from './logo.png'
-import Zoom from 'react-reveal/Zoom';
-import Fade from 'react-reveal/Fade';
+
 
 import './App.css';
 import Library from './components/Library'
 import Home from './components/Home'
+import Profile from './components/Profile'
+
 
 import Navigation from './components/Navigation'
 import Login from './components/Login'
@@ -15,7 +16,7 @@ import MainSearch from './components/MainSearch'
 
 
 import SpotifyWebApi from 'spotify-web-api-js';
-import ReactGA from 'react-ga';
+// import ReactGA from 'react-ga';
 
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
@@ -35,16 +36,16 @@ constructor (){
      spotifyApi.setAccessToken(token);
   }
 
-    ReactGA.initialize('UA-172518785-1');
-    ReactGA.pageview(window.location.pathname);
+    // ReactGA.initialize('UA-172518785-1');
+    // ReactGA.pageview(window.location.pathname);
 
   this.state ={
-    userId: '',
+        userId: '',
     loggedIn: token ? true : false,
     profPic: '',
     name: '',
     devices: '',
-    token: ''
+  token: ''
   }
 
   this.logout = this.logout.bind(this)
@@ -75,16 +76,17 @@ constructor (){
             name: response.display_name
           })
         }else{
+          console.log(response.images);
           this.setState ({
             userId: response.id,
-            profPic: response.images[0].url,
+            profPic: response.images[1].url,
             name: response.display_name
           })
         }
       })
   }
 
-  componentDidMount(){
+componentDidMount(){
       this.getUserProfile()
   }
 
@@ -95,7 +97,7 @@ constructor (){
     window.location.href = ""
   }
 
-
+  
 
   render(){
     const userId = this.state.userId
@@ -113,13 +115,15 @@ constructor (){
         {
           this.state.loggedIn ?
            <div>
+            <button onClick={this.logout}type="button" className="btn btn-danger btn-sm mx-0 logout float-right" >Log Out</button>
+
             <Router>
               <Navigation userName= {this.state.name} userPic= {this.state.profPic}  />
               <Switch>
                 <Route path="/" exact component={() => <Home />} />
                 <Route path="/search" exact component={() => <MainSearch />} />
                 <Route path="/library" exact component={() => <Library />} />
-
+                <Route path="/profile/:type/:id" exact component={() => <Profile />} />
 
               </Switch>
             </Router>
@@ -127,17 +131,13 @@ constructor (){
             </div>
           :
           <div id="login" className="login">
-            <Fade top>
             <div>
                 <img src={logo} className="logo img-fluid text-center" alt="logo"/>
                 <h1 className="logo-title font-weight-bold">Cleanify</h1>
             </div>
-            </Fade>
-            <Zoom delay={1000}>
               <div>
-              <a id="login-button" href="/login" className="btn btn-success">Log in with Spotify</a>
+              <a id="login-button" href="http://localhost:3333/login" className="btn btn-success">Log in with Spotify</a>
               </div>
-            </Zoom>
           </div>
         }
 

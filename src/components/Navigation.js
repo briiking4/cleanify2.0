@@ -18,21 +18,20 @@ function Navigation(props) {
     <div className="row profile">
         <img src= {profPic} className="profPic rounded-circle img-fluid" alt="profile pic"/>
         <h1 className="profName">{profName}</h1>
-        <button type="button" className="btn btn-danger btn-sm mx-0 logout float-right" >Log Out</button>
     </div>
 
       <Navbar className="fixed-bottom navbar" >
           <Nav className="mx-auto">
 
-            <Link className="btn" to="/"><HomeIcon className={`nav-bar-icon  ${
+            <Link className="btn mb-2" to="/"><HomeIcon className={`nav-bar-icon  ${
               props.location.pathname === "/" ? "active" : ""
             }`} /></Link>
 
-            <Link className="btn" to="/search"><Search className={`nav-bar-icon  ${
+            <Link className="btn mb-2" to="/search"><Search className={`nav-bar-icon  ${
               props.location.pathname === "/search" ? "active" : ""
             }`} /></Link>
 
-            <Link className="btn" to="/library"><LibraryMusic className={`nav-bar-icon  ${
+            <Link className="btn mb-2" to="/library"><LibraryMusic className={`nav-bar-icon  ${
               props.location.pathname === "/library" ? "active" : ""
             }`} /></Link>
 

@@ -44,7 +44,6 @@ function Home(props) {
         setUserPlaylists(items.items)
       }
 
-
       getUserTopTracks()
       getTopTracks()
       getPlaylists()
@@ -53,35 +52,26 @@ function Home(props) {
 
 
    return (
-//list.map is not a function
 
       <div id="Home" className="pt-2">
-      {searchItemSelected ?
-        <Profile id={selectedValue.id} name={selectedValue.name} artist={selectedValue.artist} type={selectedValue.type} location='home'/>
-        :
-        <div>
-          <h5 className="text-left font-weight-bold text-yellow">Popular Singles</h5>
-          {topTracksList ?
-              <ListItems horiz={true} list={topTracksList} type='track' itemSelected={setSelected} selectedItem={setSelectedValue}/>
-            :
-            <></>
+          {topTracksList &&
+            <div>
+              <h5 className="text-left font-weight-bold text-yellow">Popular Singles</h5>
+              <ListItems horiz={true} list={topTracksList} type='track'/>
+            </div>
           }
-          <h5 className="text-left font-weight-bold text-yellow">Your Top Tracks</h5>
-          {userTopTracksList ?
-              <ListItems horiz={true} list={userTopTracksList} type='track' itemSelected={setSelected} selectedItem={setSelectedValue}/>
-            :
-            <></>
+          {userTopTracksList &&
+            <div>
+              <h5 className="text-left font-weight-bold text-yellow">Your Top Tracks</h5>
+              <ListItems horiz={true} list={userTopTracksList} type='track'/>
+            </div>
           }
-          <h5 className="text-left font-weight-bold text-yellow">Your Playlists</h5>
-          {userPlaylists ?
-              <ListItems horiz={true} list={userPlaylists} type='playlist' itemSelected={setSelected} selectedItem={setSelectedValue}/>
-            :
-            <></>
+          {userPlaylists &&
+            <div>
+              <h5 className="text-left font-weight-bold text-yellow">Your Playlists</h5>
+              <ListItems horiz={true} list={userPlaylists} type='playlist'/>
+            </div>
           }
-
-        </div>
-      }
-
       </div>
     );
 }
