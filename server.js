@@ -19,7 +19,7 @@ const __dirname = path.resolve();
 var client_id = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
 var client_secret = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET;
 // var redirect_uri = 'http://localhost:3333/callback'; DEV
-var redirect_uri = 'https://briiking4.github.io/cleanify2.0/';
+var redirect_uri = 'https://briiking4.github.io/cleanify2.0/callback';
 
 
 var stateKey = 'spotify_auth_state';
